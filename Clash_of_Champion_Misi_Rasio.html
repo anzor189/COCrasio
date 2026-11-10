@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clash of Champion - Misi Rasio</title>
+<style>
+:root{--navy:#14244b;--blue:#2864d7;--cyan:#55d6e8;--yellow:#ffd34e;--pink:#ff6688;--green:#25b985;--paper:#f4f8ff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-rounded,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 15% 15%,#426fd4,#1a2c63 52%,#101b3e);color:#fff;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer;border:0;font-weight:800;transition:.15s transform,.15s filter}button:hover{filter:brightness(1.07);transform:translateY(-2px)}button:active{transform:scale(.98)}
+.screen{display:none;min-height:100vh;padding:clamp(12px,2vw,28px)}.screen.active{display:flex;flex-direction:column}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.brand{font-weight:1000;letter-spacing:1px;font-size:clamp(18px,2.2vw,30px)}.brand span{color:var(--yellow)}.pill{background:#ffffff1c;border:1px solid #ffffff35;border-radius:999px;padding:9px 14px;font-weight:800}
+.hero{margin:auto;width:min(1100px,100%);text-align:center}.logo{font-size:clamp(45px,8vw,90px);filter:drop-shadow(0 9px 0 #12214d)}h1{font-size:clamp(32px,5vw,62px);line-height:1;margin:10px 0;color:#fff;text-shadow:0 5px 0 #172958}.subtitle{font-size:clamp(16px,2vw,23px);color:#dbe9ff;margin:12px 0 28px}
+.panel{background:#ffffff12;border:1px solid #ffffff30;backdrop-filter:blur(10px);border-radius:24px;padding:clamp(14px,2vw,24px);box-shadow:0 18px 40px #07143455}
+.settings{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:left;margin:0 auto 18px}.field{background:#ffffff12;border-radius:16px;padding:12px}.field label{display:block;font-size:13px;color:#d6e5ff;font-weight:800;margin-bottom:7px}.field input,.field select{width:100%;padding:10px;border-radius:10px;border:2px solid #d5e5ff;background:white;color:#18264b;font-weight:800}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.btn{padding:13px 20px;border-radius:14px;background:var(--yellow);color:#24315a;box-shadow:0 5px 0 #bd8b20}.btn.secondary{background:#fff;color:#24315a;box-shadow:0 5px 0 #b8c7e0}.btn.blue{background:#65d5ec;box-shadow:0 5px 0 #2187a7}.btn.danger{background:#ff8199;box-shadow:0 5px 0 #c34260}
+.player-config{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}.player-chip{display:flex;align-items:center;gap:7px;background:#ffffff1c;border-radius:14px;padding:8px 10px}.player-chip input{width:110px;padding:7px;border-radius:8px;border:0}.avatar{font-size:25px}
+.game-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{background:#ffffff1c;border:1px solid #ffffff30;border-radius:14px;padding:9px 13px;font-weight:900}.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:16px;flex:1;min-height:0}.board-wrap{background:linear-gradient(145deg,#e9f4ff,#c9e1ff);border-radius:22px;padding:12px;box-shadow:inset 0 0 0 4px #ffffffaa;display:flex;min-height:0}
+.board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(6,1fr);gap:7px;width:100%;min-height:450px}
+.tile{position:relative;border-radius:13px;background:linear-gradient(145deg,#fff,#dceaff);color:#23416f;box-shadow:0 4px 0 #9bb9df;display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:0;overflow:hidden}
+.tile .num{font-size:clamp(16px,2vw,27px);font-weight:1000}.tile .small{font-size:10px;font-weight:900;color:#7790b7}.tile:nth-child(4n+1){background:linear-gradient(145deg,#fff6cf,#ffe18b)}.tile:nth-child(4n+2){background:linear-gradient(145deg,#dffff4,#a8eed7)}.tile:nth-child(4n+3){background:linear-gradient(145deg,#e9e2ff,#c9baff)}
+.tile.solved{background:linear-gradient(145deg,#d5ffeb,#69d9ae);box-shadow:0 4px 0 #279a72;cursor:default}.tile.solved .num{font-size:clamp(25px,3vw,40px)}.tile:disabled{opacity:1}.tile:focus-visible{outline:4px solid #ff8b3d}
+.tile .check{position:absolute;top:4px;right:6px;color:#16845e;font-size:13px}
+.sidebar{display:flex;flex-direction:column;gap:12px}.side-card{background:#ffffff16;border:1px solid #ffffff2b;border-radius:18px;padding:14px}.side-card h3{margin:0 0 10px;color:var(--yellow);font-size:16px}.team-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff20;font-weight:800}.team-row:last-child{border:0}.team-row .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.team-row .score{background:#ffffff20;border-radius:9px;padding:4px 8px}.progress{height:12px;background:#ffffff25;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,#4de0b2,#ffe16c);width:0;transition:.3s}
+.modal{position:fixed;inset:0;background:#08132bdc;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.dialog{width:min(650px,100%);max-height:92vh;overflow:auto;background:#f7faff;color:#1b2b50;border-radius:24px;padding:clamp(18px,3vw,30px);box-shadow:0 25px 70px #0008}.dialog h2{margin:0 0 12px;color:#244e9d}.question{font-size:clamp(20px,3vw,30px);font-weight:900;line-height:1.35;margin:16px 0}.answer-input{width:100%;padding:15px;border:3px solid #c4d7f3;border-radius:14px;font-size:26px;font-weight:900;text-align:center;color:#1b2b50}.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.timerbar{height:12px;background:#dbe6f5;border-radius:99px;overflow:hidden;margin:10px 0}.timerbar div{height:100%;width:100%;background:#27b987;transition:width .2s linear}.choice-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.choice{background:#e4efff;border:2px solid #c4d9f7;border-radius:12px;padding:12px;color:#19396c;text-align:left;font-weight:900}.choice:hover{background:#d1e4ff}.notice{padding:12px;border-radius:12px;background:#e8f4ff;color:#254574;font-weight:800;margin-top:12px}
+.list-scroll{max-height:65vh;overflow:auto}.bank-item{padding:10px 0;border-bottom:1px solid #d9e4f3}.bank-item b{color:#285ab0}.ranking{display:grid;gap:10px}.rank-item{display:flex;align-items:center;gap:12px;background:#e8f1ff;padding:14px;border-radius:14px;font-weight:900}.rank-no{font-size:25px;width:38px}.rank-item:first-child{background:#fff0bd}
+footer{margin-top:14px;text-align:center;color:#c6d9ff;font-size:12px}
+@media(max-width:900px){.settings{grid-template-columns:repeat(2,1fr)}.game-layout{grid-template-columns:1fr}.board{min-height:420px}.sidebar{display:grid;grid-template-columns:1fr 1fr}.side-card:last-child{grid-column:1/-1}}
+@media(max-width:600px){.screen{padding:10px}.settings{grid-template-columns:1fr 1fr}.board{gap:4px;min-height:370px}.tile{border-radius:8px}.tile .small{display:none}.sidebar{grid-template-columns:1fr}.side-card:last-child{grid-column:auto}.topbar{align-items:flex-start}.game-head{align-items:flex-start}}
+@media print{body{background:#fff;color:#000}.screen,.modal,.no-print{display:none!important}#printArea{display:block!important;color:#000;padding:12mm;font-family:Arial}.print-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8mm}.print-card{break-inside:avoid;border:1px solid #777;padding:7mm;min-height:35mm}.print-card h3{margin:0 0 5mm;font-size:12pt}.print-card p{font-size:13pt;margin:0;line-height:1.4}}
+#printArea{display:none}
+</style>
+</head>
+<body>
+<section id="home" class="screen active">
+ <div class="topbar"><div class="brand">🏆 CLASH <span>OF CHAMPION</span></div><div class="pill">MATEMATIKA • KELAS VI</div></div>
+ <div class="hero">
+  <div class="logo">🧠⚡🏆</div><h1>CLASH OF<br><span style="color:#ffd34e">CHAMPION</span></h1>
+  <div class="subtitle">MISI RASIO • Tantangan Menentukan Bagian dari Keseluruhan</div>
+  <div class="panel">
+   <div class="settings">
+    <div class="field"><label for="timerSetting">⏱️ WAKTU MENJAWAB</label><select id="timerSetting"><option value="15">15 detik</option><option value="30" selected>30 detik</option><option value="45">45 detik</option><option value="60">60 detik</option><option value="0">Tanpa batas</option></select></div>
+    <div class="field"><label for="playerCount">👥 JUMLAH KELOMPOK</label><select id="playerCount"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
+    <div class="field"><label for="musicSetting">🎵 MUSIK</label><select id="musicSetting"><option value="on" selected>Aktif</option><option value="off">Nonaktif</option></select></div>
+    <div class="field"><label>🖥️ TAMPILAN</label><button class="btn blue" style="width:100%;padding:10px" onclick="toggleFullscreen()">⛶ Full Screen</button></div>
+   </div>
+   <div style="font-weight:900;color:#ffe17b">ATUR NAMA & AVATAR KELOMPOK</div>
+   <div id="playerConfig" class="player-config"></div>
+   <div class="actions">
+    <button class="btn" onclick="startGame()">🚀 MULAI PERTANDINGAN</button>
+    <button class="btn secondary" onclick="openBank()">📚 BANK SOAL</button>
+    <button class="btn blue" onclick="printCards()">🖨️ CETAK KARTU SOAL</button>
+   </div>
+  </div>
+  <footer>48 tantangan • 48 kotak • Kerja sama, ketelitian, dan strategi!</footer>
+ </div>
+</section>
+
+<section id="game" class="screen">
+ <div class="topbar game-head">
+  <div class="brand">🏆 CLASH <span>OF CHAMPION</span></div>
+  <div class="stats"><div class="stat" id="progressText">0 / 48 TERBUKA</div><div class="stat" id="timerLabel">⏱️ 30 DETIK</div><div class="stat">⭐ BENAR = 1 POIN</div></div>
+  <div class="actions"><button class="btn secondary" onclick="openBank()">Bank Soal</button><button class="btn blue" onclick="toggleFullscreen()">⛶</button><button class="btn danger" onclick="goHome()">Keluar</button></div>
+ </div>
+ <div class="game-layout">
+  <div class="board-wrap"><div id="board" class="board"></div></div>
+  <aside class="sidebar">
+   <div class="side-card"><h3>🏅 PAPAN PERINGKAT</h3><div id="teamScores"></div></div>
+   <div class="side-card"><h3>📊 PROGRES MISI</h3><div class="progress"><div id="progressBar"></div></div><div id="progressCaption" style="margin-top:8px;font-weight:900">0 dari 48 soal terselesaikan</div></div>
+   <div class="side-card"><h3>📌 CARA BERMAIN</h3><div style="font-size:13px;line-height:1.55;color:#e2edff">1. Tekan kotak soal.<br>2. Pilih kelompok yang akan menjawab.<br>3. Masukkan jawaban jumlah bagian.<br>4. Jawaban benar mengunci kotak dan memberi 1 poin.<br>5. Jawaban salah membuat kotak tertutup kembali.</div></div>
+  </aside>
+ </div>
+</section>
+
+<div id="modal" class="modal"><div class="dialog" id="dialog"></div></div>
+<div id="printArea"></div>
+<script>
+const avatars=['🦊','🐼','🦁','🐯','🐸','🐨','🐵','🐧','🐲','🦄','🐻','🐰'];
+const colors=['#ff8b65','#55b7ff','#b18aff','#36c99a','#ffcb4b','#ff79b0'];
+const raw=[
+['Di perpustakaan terdapat 30 buku. Rasio buku cerita dan buku pengetahuan adalah 2 : 3. Berapa banyak buku cerita? ',2,3,30],
+['Dalam sebuah keranjang ada 40 buah, rasio apel dan jeruk 3 : 5. Berapa banyak apel?',3,5,40],
+['Jumlah siswa laki-laki dan perempuan 36 anak dengan rasio 4 : 5. Berapa siswa perempuan?',4,5,36],
+['Rasio kelereng merah dan biru 2 : 7. Jumlah seluruhnya 45. Berapa kelereng merah?',2,7,45],
+['Di kebun ada 56 tanaman cabai dan tomat dengan rasio 3 : 5. Berapa tanaman cabai?',3,5,56],
+['Uang Rani dan Dita berjumlah Rp72.000 dengan rasio 5 : 4. Berapa uang Rani?',5,4,72000],
+['Rasio ayam dan bebek 7 : 3. Jumlah unggas 80 ekor. Berapa bebek?',7,3,80],
+['Panjang pita merah dan kuning berasio 4 : 1. Jumlah panjang 25 meter. Berapa meter pita kuning?',4,1,25],
+['Di kelas ada 42 siswa. Rasio yang ikut klub sains dan seni 4 : 3. Berapa siswa klub seni?',4,3,42],
+['Jumlah kue cokelat dan keju 64 buah, rasionya 5 : 3. Berapa kue keju?',5,3,64],
+['Rasio buku milik Andi dan Bima 3 : 4. Jumlah buku 49. Berapa buku Andi?',3,4,49],
+['Dalam kotak ada 54 pensil hitam dan merah dengan rasio 5 : 4. Berapa pensil merah?',5,4,54],
+['Rasio ikan mas dan ikan koi 2 : 5. Jumlah ikan 63 ekor. Berapa ikan koi?',2,5,63],
+['Jumlah bola sepak dan basket 48 dengan rasio 5 : 3. Berapa bola sepak?',5,3,48],
+['Rasio siswa yang membawa bekal dan membeli makanan 7 : 2. Jumlah 45 siswa. Berapa yang membeli makanan?',7,2,45],
+['Di peternakan ada 72 kambing dan sapi dengan rasio 5 : 4. Berapa kambing?',5,4,72],
+['Rasio bunga mawar dan melati 3 : 2. Jumlah 75 bunga. Berapa bunga melati?',3,2,75],
+['Jumlah kelereng Riko dan Rudi 88 dengan rasio 5 : 6. Berapa kelereng Rudi?',5,6,88],
+['Rasio mobil merah dan putih 1 : 4. Jumlah mobil 65. Berapa mobil merah?',1,4,65],
+['Dalam kantong ada 84 permen stroberi dan jeruk, rasio 3 : 4. Berapa permen jeruk?',3,4,84],
+['Rasio siswa kelas A dan B 6 : 5. Jumlah siswa 55. Berapa siswa kelas A?',6,5,55],
+['Jumlah mangga dan pisang 96 buah dengan rasio 5 : 7. Berapa mangga?',5,7,96],
+['Rasio pensil dan penghapus 8 : 3. Jumlah 66 benda. Berapa penghapus?',8,3,66],
+['Di kolam ada 35 ikan nila dan lele, rasio 2 : 5. Berapa ikan nila?',2,5,35],
+['Rasio tabungan Sinta dan Lala 3 : 5. Jumlah Rp128.000. Berapa tabungan Lala?',3,5,128000],
+['Jumlah peserta lomba putra dan putri 90 dengan rasio 4 : 5. Berapa peserta putra?',4,5,90],
+['Rasio gelas besar dan kecil 2 : 3. Jumlah 125 gelas. Berapa gelas kecil?',2,3,125],
+['Di toko ada 108 kaus merah dan biru, rasio 5 : 4. Berapa kaus biru?',5,4,108],
+['Rasio buku matematika dan bahasa 7 : 5. Jumlah buku 144. Berapa buku matematika?',7,5,144],
+['Jumlah roti isi cokelat dan keju 78 dengan rasio 5 : 8. Berapa roti isi cokelat?',5,8,78],
+['Rasio kendaraan roda dua dan roda empat 9 : 4. Jumlah 91 kendaraan. Berapa kendaraan roda empat?',9,4,91],
+['Dalam kelas terdapat 120 alat tulis, rasio pulpen dan pensil 7 : 5. Berapa pensil?',7,5,120],
+['Rasio tanaman berbunga dan tidak berbunga 3 : 7. Jumlah 150 tanaman. Berapa tanaman berbunga?',3,7,150],
+['Jumlah koin emas dan perak 132 dengan rasio 5 : 6. Berapa koin perak?',5,6,132],
+['Rasio jarak yang ditempuh pagi dan sore 4 : 5. Total 81 km. Berapa jarak sore?',4,5,81],
+['Di aula ada 160 kursi merah dan biru dengan rasio 3 : 5. Berapa kursi merah?',3,5,160],
+['Rasio siswa yang memilih sepak bola dan bulu tangkis 7 : 8. Jumlah 75 siswa. Berapa yang memilih bulu tangkis?',7,8,75],
+['Jumlah jeruk dan salak 126 buah dengan rasio 4 : 5. Berapa buah salak?',4,5,126],
+['Rasio uang saku Aldi dan Beni 2 : 3. Jumlah Rp175.000. Berapa uang saku Aldi?',2,3,175000],
+['Di kebun binatang terdapat 144 burung dan reptil dengan rasio 5 : 3. Berapa reptil?',5,3,144],
+['Rasio buku fiksi dan nonfiksi 7 : 9. Jumlah 128 buku. Berapa buku fiksi?',7,9,128],
+['Jumlah peserta pramuka putra dan putri 105 dengan rasio 4 : 3. Berapa peserta putri?',4,3,105],
+['Rasio air dalam wadah A dan B 5 : 7. Jumlah 180 liter. Berapa liter wadah B?',5,7,180],
+['Di toko terdapat 198 pensil warna dan krayon dengan rasio 5 : 6. Berapa krayon?',5,6,198],
+['Rasio kue nastar dan kastengel 3 : 4. Jumlah 245 kue. Berapa kue nastar?',3,4,245],
+['Jumlah siswa yang naik bus dan berjalan kaki 156 dengan rasio 5 : 7. Berapa siswa yang berjalan kaki?',5,7,156],
+['Rasio koleksi komik dan ensiklopedia 8 : 5. Jumlah 260 buku. Berapa ensiklopedia?',8,5,260],
+['Di lapangan ada 225 bola merah dan putih dengan rasio 4 : 5. Berapa bola putih?',4,5,225]
+];
+const targetSides=[0,0,1,0,0,0,1,1,1,1,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,0,1,1,0,0,1,1,0,1,1,0,1,1,0,1,0,1,1,1,0,1,1,1];
+const questions=raw.map((r,i)=>{let unit=r[3]/(r[1]+r[2]);let target=unit*(targetSides[i]===0?r[1]:r[2]);
+return {id:i+1,text:r[0],answer:Math.round(target),ratio:`${r[1]} : ${r[2]}`,total:r[3],explain:`Jumlah bagian = ${r[1]} + ${r[2]} = ${r[1]+r[2]}. Nilai 1 bagian = ${r[3].toLocaleString('id-ID')} ÷ ${r[1]+r[2]} = ${unit.toLocaleString('id-ID')}. Bagian yang ditanyakan = ${Math.round(target).toLocaleString('id-ID')}.`};});
+let teams=[],solved=new Array(48).fill(null),activeQuestion=null,timerId=null,timeLeft=0,audioCtx=null,musicTimer=null,melodyStep=0;
+const $=id=>document.getElementById(id);
+function renderPlayerConfig(){let n=+$('playerCount').value;let html='';for(let i=0;i<n;i++)html+=`<div class="player-chip"><span class="avatar">${avatars[i]}</span><input id="pname${i}" value="Kelompok ${i+1}" aria-label="Nama kelompok ${i+1}"><select id="pavatar${i}" aria-label="Avatar kelompok ${i+1}">${avatars.map((a,j)=>`<option value="${a}" ${j===i?'selected':''}>${a}</option>`).join('')}</select></div>`;$('playerConfig').innerHTML=html;}
+$('playerCount').addEventListener('change',renderPlayerConfig);renderPlayerConfig();
+function startGame(){teams=[];let n=+$('playerCount').value;for(let i=0;i<n;i++)teams.push({name:$('pname'+i).value.trim()||`Kelompok ${i+1}`,avatar:$('pavatar'+i).value,score:0,correct:0});solved.fill(null);$('home').classList.remove('active');$('game').classList.add('active');renderBoard();renderScores();updateProgress();if($('musicSetting').value==='on')startMusic();}
+function renderBoard(){let b=$('board');b.innerHTML='';questions.forEach(q=>{let owner=solved[q.id-1],btn=document.createElement('button');btn.className='tile'+(owner!==null?' solved':'');btn.disabled=owner!==null;btn.innerHTML=owner!==null?`<span class="check">✓</span><span class="num">${teams[owner].avatar}</span><span class="small">${q.id}</span>`:`<span class="num">${q.id}</span><span class="small">KOTAK SOAL</span>`;if(owner===null)btn.onclick=()=>openQuestion(q.id-1);b.appendChild(btn);});}
+function renderScores(){$('teamScores').innerHTML=teams.map((t,i)=>`<div class="team-row"><span>${t.avatar}</span><span class="name">${escapeHtml(t.name)}</span><span class="score">${t.score} poin</span></div>`).join('');}
+function updateProgress(){let count=solved.filter(x=>x!==null).length;$('progressText').textContent=`${count} / 48 TERJAWAB`;$('progressCaption').textContent=`${count} dari 48 soal terselesaikan`;$('progressBar').style.width=(count/48*100)+'%';}
+function openQuestion(index){if(solved[index]!==null)return;activeQuestion=index;let q=questions[index];$('modal').classList.add('show');let options=teams.map((t,i)=>`<button class="choice" onclick="chooseTeam(${i})">${t.avatar} ${escapeHtml(t.name)}</button>`).join('');$('dialog').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><span class="pill" style="background:#e3edff;color:#2855a0">KARTU SOAL ${q.id} / 48</span><button class="btn secondary" onclick="closeModal()">✕</button></div><h2>Pilih kelompok penjawab</h2><div class="choice-list">${options}</div><div class="notice">Pilih satu kelompok. Kelompok tersebut mendapat kesempatan menjawab soal ini.</div>`;}
+function chooseTeam(i){let q=questions[activeQuestion];$('dialog').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><span class="pill" style="background:#e3edff;color:#2855a0">${teams[i].avatar} ${escapeHtml(teams[i].name)}</span><button class="btn secondary" onclick="closeModal()">✕</button></div><h2>Soal Nomor ${q.id}</h2><div class="question">${q.text}</div><label style="font-weight:900">Jawaban (jumlah bagian):</label><input id="answerInput" class="answer-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Ketik angka jawaban"><div id="timerArea"></div><div class="modal-actions"><button class="btn" onclick="submitAnswer(${i})">KUNCI JAWABAN</button><button class="btn secondary" onclick="openQuestion(${activeQuestion})">Ganti Kelompok</button></div><div id="feedback"></div>`;startTimer(i);}
+function startTimer(team){clearInterval(timerId);let limit=+$('timerSetting').value;timeLeft=limit;if(limit===0){$('timerArea').innerHTML='<div class="notice">⏱️ Waktu tanpa batas</div>';return;}$('timerArea').innerHTML=`<div style="display:flex;justify-content:space-between;font-weight:900;margin-top:12px"><span>WAKTU TERSISA</span><span id="timeNum">${timeLeft} detik</span></div><div class="timerbar"><div id="timerFill"></div></div>`;timerId=setInterval(()=>{timeLeft--;$('timeNum').textContent=timeLeft+' detik';$('timerFill').style.width=(timeLeft/limit*100)+'%';if(timeLeft<=0){clearInterval(timerId);$('feedback').innerHTML='<div class="notice" style="background:#ffe5e9;color:#a52846">Waktu habis! Kotak akan ditutup kembali.</div>';setTimeout(closeModal,1100);}},1000);}
+function submitAnswer(teamIndex){let input=$('answerInput'),val=(input.value||'').replace(/[^\d]/g,'');if(!val){input.focus();return;}clearInterval(timerId);let q=questions[activeQuestion],correct=Number(val)===q.answer;if(correct){solved[activeQuestion]=teamIndex;teams[teamIndex].score++;teams[teamIndex].correct++;$('feedback').innerHTML='<div class="notice" style="background:#d8ffec;color:#08734c">🎉 BENAR! Kotak berhasil ditaklukkan. +1 poin!</div>';playTone(880,.16);renderBoard();renderScores();updateProgress();setTimeout(()=>{closeModal();if(solved.every(x=>x!==null))showResults();},950);}else{$('feedback').innerHTML=`<div class="notice" style="background:#ffe5e9;color:#a52846">Belum tepat. Tetap semangat! Kotak akan tertutup kembali.</div>`;playTone(190,.2);setTimeout(closeModal,1300);}}
+function closeModal(){clearInterval(timerId);$('modal').classList.remove('show');}
+function openBank(){let html=questions.map(q=>`<div class="bank-item"><b>Soal ${q.id}.</b> ${q.text}<div style="font-size:13px;color:#365b92;margin-top:5px">Kunci: <b>${q.answer.toLocaleString('id-ID')}</b> • ${q.explain}</div></div>`).join('');$('modal').classList.add('show');$('dialog').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h2>📚 Bank Soal & Kunci Jawaban</h2><button class="btn secondary" onclick="closeModal()">Tutup</button></div><p>Materi: menentukan jumlah salah satu bagian jika rasio dan jumlah keseluruhan diketahui.</p><div class="list-scroll">${html}</div>`;}
+function printCards(){let area=$('printArea');area.innerHTML='<h1 style="text-align:center;color:#111">KARTU SOAL — CLASH OF CHAMPION</h1><p style="text-align:center">Matematika Kelas VI • Menentukan jumlah salah satu bagian dari rasio</p><div class="print-grid">'+questions.map(q=>`<div class="print-card"><h3>KARTU SOAL ${q.id}</h3><p>${q.text}</p></div>`).join('')+'</div>';window.print();}
+function showResults(){stopMusic();let sorted=teams.map((t,i)=>({...t,original:i})).sort((a,b)=>b.score-a.score);$('modal').classList.add('show');$('dialog').innerHTML=`<div style="text-align:center;font-size:55px">🏆🎉🏆</div><h2 style="text-align:center;font-size:30px">PERTANDINGAN SELESAI!</h2><p style="text-align:center">Semua 48 kotak berhasil dijawab dengan benar.</p><div class="ranking">${sorted.map((t,i)=>`<div class="rank-item"><span class="rank-no">${['🥇','🥈','🥉'][i]||'🏅'}</span><span style="font-size:27px">${t.avatar}</span><span style="flex:1">${escapeHtml(t.name)}</span><span>${t.score} poin</span></div>`).join('')}</div><div class="modal-actions"><button class="btn" onclick="closeModal();goHome()">KEMBALI KE MENU</button><button class="btn secondary" onclick="closeModal();startGame()">MAIN LAGI</button></div>`;}
+function goHome(){stopMusic();clearInterval(timerId);$('game').classList.remove('active');$('home').classList.add('active');}
+function toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.();}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function playTone(freq,dur){try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);}catch(e){}}
+function startMusic(){stopMusic();try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let notes=[523,659,784,659,587,698,880,698,523,659,784,1046,880,784,659,587];musicTimer=setInterval(()=>{if(!audioCtx)return;playTone(notes[melodyStep%notes.length],.13);melodyStep++;},260);}catch(e){}}
+function stopMusic(){if(musicTimer)clearInterval(musicTimer);musicTimer=null;}
+$('musicSetting').addEventListener('change',()=>{if($('musicSetting').value==='off')stopMusic();else if($('game').classList.contains('active'))startMusic();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
